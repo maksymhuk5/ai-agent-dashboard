@@ -15,10 +15,48 @@ import {
 } from "@/components/ui/table"
 
 import { Frown } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export function CallTable<TData>({
+    loading,
     table
-}: { table: TableType<TData> }) {
+}: { loading: boolean, table: TableType<TData> }) {
+
+    if (loading) {
+        return (
+            <div className="rounded-md border">
+                <Table>
+                    <TableHeader>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <TableRow key={headerGroup.id}>
+                                {headerGroup.headers.map((header) => (
+                                    <TableHead key={header.id}>
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            )}
+                                    </TableHead>
+                                ))}
+                            </TableRow>
+                        ))}
+                    </TableHeader>
+                    <TableBody>
+                        {Array.from({ length: 5 }).map((_, index) => (
+                            <TableRow key={index}>
+                                {Array.from({ length: table.getHeaderGroups()[0].headers.length }).map((_, cellIndex) => (
+                                    <TableCell key={cellIndex}>
+                                        <Skeleton className="h-6 w-full" />
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
+        )
+    }
 
     return (
         <div className="rounded-md border">

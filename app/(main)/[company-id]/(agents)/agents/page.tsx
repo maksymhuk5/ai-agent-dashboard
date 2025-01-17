@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { agents } from "@/app/this/constants/garbage";
 import { Agent } from "@/app/this/constants/type";
 
 import { Plus, Search, SlidersHorizontal, Copy } from "lucide-react";
@@ -13,22 +12,38 @@ import SubHeader from "@/app/(main)/this/components/sub-header";
 import Container from "@/app/this/components/container";
 import { Button } from "@/components/ui/button";
 import OperationContainer, { OperationButton } from "@/app/(main)/this/components/operation-container";
+import { Skeleton } from "@/components/ui/skeleton";
+
+import { getRetellClient } from "@/lib/retell";
+import { useToast } from "@/hooks/use-toast";
+
 
 export default function AgentsPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
-    const [openDialer, setOpenDialer] = useState(false);
-
+    const [openDialer, setOpenDialer] = useState({open: false, agent: null});
+    const [agents, setAgents] = useState<Agent[]>([]);
+    const [loading, setLoading] = useState(true);
+    const { toast } = useToast();
+    
     // Filter agents based on search query
     const filteredAgents = useMemo(() => {
         return agents.filter(agent =>
-            agent.name.toLowerCase().includes(searchQuery.toLowerCase())
+            agent.agent_name.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }, [agents, searchQuery]);
 
-    const handleOpenDialer = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.stopPropagation();
-        setOpenDialer(true);
+    const handleOpenDialer = (agent: Agent) => {
+        console.log(agent);
+        if (agent.phone_number.outbound_number) {
+            setOpenDialer({open: true, agent: agent});
+        } else {
+            toast({
+                title: "No outbound phone number found",
+                description: "Please add a outbound phone number to the agent",
+                variant: "destructive"
+            });
+        }
     };
 
     useEffect(() => {
@@ -36,10 +51,51 @@ export default function AgentsPage() {
     }, []);
 
     const fetchAgents = async () => {
-        const response = await fetch('/api/agents');
-        const data = await response.json();
-        console.log(data);
+        try {
+            const retell = getRetellClient();
+            const res_agents = await retell.agent.list();
+            const res_phoneNumbers = await retell.phoneNumber.list();
+
+            const agentsWithPhoneNumbers = res_agents.map(agent => {
+                const phoneNumbers = res_phoneNumbers.filter(phoneNumber =>
+                    phoneNumber.inbound_agent_id === agent.agent_id ||
+                    phoneNumber.outbound_agent_id === agent.agent_id
+                );
+
+                return {
+                    ...agent,
+                    phone_number: {
+                        inbound_number: phoneNumbers.find(p => p.inbound_agent_id === agent.agent_id)?.phone_number || null,
+                        outbound_number: phoneNumbers.find(p => p.outbound_agent_id === agent.agent_id)?.phone_number || null
+                    }
+                };
+            });
+
+            setAgents(agentsWithPhoneNumbers);
+        } catch (error) {
+            console.error('Error fetching agents:', error);
+            toast({
+                title: "Error",
+                description: "Failed to fetch agents",
+                variant: "destructive"
+            });
+        } finally {
+            setLoading(false);
+        }
     };
+
+    const AgentSkeleton = () => (
+        <div className="p-4 border rounded-lg">
+            <div className="flex gap-4">
+                <Skeleton className="h-32 w-32 rounded-lg" />
+                <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-1/3" />
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-4 w-2/3" />
+                </div>
+            </div>
+        </div>
+    );
 
     return (
         <div className="flex flex-col">
@@ -64,20 +120,33 @@ export default function AgentsPage() {
             </SubHeader>
 
             <Container className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(400px,1fr))] gap-2 md:gap-4 w-full">
-                {filteredAgents.map((agent) => (
-                    <AgentCard key={agent.id} agent={agent} handleClickAgent={() => setSelectedAgent(agent)} handleOpenDialer={handleOpenDialer} />
-                ))}
+                {loading ? (
+                    <>
+                        <AgentSkeleton />
+                        <AgentSkeleton />
+                        <AgentSkeleton />
+                    </>
+                ) : (
+                    filteredAgents.map((agent) => (
+                        <AgentCard 
+                            key={agent.agent_id} 
+                            agent={agent} 
+                            handleClickAgent={() => setSelectedAgent(agent)} 
+                            handleOpenDialer={handleOpenDialer} 
+                        />
+                    ))
+                )}
             </Container>
 
-            <OperationContainer>
+            {/* <OperationContainer>
                 <OperationButton tooltip="Duplicate agent" iconNode={Copy}>
                 </OperationButton>
                 <OperationButton tooltip="Add agent" iconNode={Plus}>
                 </OperationButton>
-            </OperationContainer>
+            </OperationContainer> */}
 
             {selectedAgent && <AgentSheetContent agent={selectedAgent} handleCloseSheet={() => setSelectedAgent(null)} handleOpenDialer={handleOpenDialer} />}
-            {openDialer && <DialerDialog open={openDialer} onOpenChange={setOpenDialer} />}
+            {openDialer.open && <DialerDialog openDialer={openDialer} onOpenChange={() => setOpenDialer({open: false, agent: null})} />}
 
         </div>
     );

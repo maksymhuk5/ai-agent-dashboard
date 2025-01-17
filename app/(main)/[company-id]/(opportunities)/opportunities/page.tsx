@@ -85,9 +85,9 @@ export default function LeadsPage() {
                 </div>
             </Container>
 
-            <OperationContainer>
+            {/* <OperationContainer>
                 <OperationButton iconNode={Download} tooltip="Export" />
-            </OperationContainer>
+            </OperationContainer> */}
         </div>
     );
 }

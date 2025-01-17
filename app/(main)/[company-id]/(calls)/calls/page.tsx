@@ -15,10 +15,19 @@ import { DataTablePagination } from "@/app/this/components/table/datatable-pagin
 import { Call } from "@/app/this/constants/type";
 import { calls as sample_calls } from "@/app/this/constants/garbage";
 import { Download } from "lucide-react";
+import { getRetellClient } from "@/lib/retell";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function CallsPage() {
     const [calls, setCalls] = useState<Call[]>([]);
+    const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
+    const [selectedCall, setSelectedCall] = useState<Call | null>(null);
     const [pagination, setPagination] = useState({
         pageIndex: 0,
         pageSize: 10,
@@ -27,36 +36,32 @@ export default function CallsPage() {
 
     // Filter calls based on search query
     useEffect(() => {
-        const filteredCalls = sample_calls.filter(call =>
-            call.time.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            call.duration.toString().includes(searchQuery) ||
-            call.callType.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            call.cost.toString().includes(searchQuery) ||
-            call.agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            call.lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            call.from.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            call.to.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            call.callResult.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        setCalls(filteredCalls);
+        fetchCalls();
     }, [searchQuery, pagination]);
-
-    const handleView = (call: Call) => {
-        console.log(call);
+    
+    const fetchCalls = async () => {
+        try {
+            setLoading(true);
+            const client = await getRetellClient();
+            const res_calls = await client.call.list({});
+            console.log(res_calls);
+            // const filteredCalls = res_calls.filter(call => call.call_type === 'web_call');
+            setCalls(res_calls);
+            
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
     }
 
-    const handleDelete = (id: string) => {
-        console.log(id);
+    const handleListen = (call: Call) => {
+        setSelectedCall(call);
     }
-
-    const handleExport = (call: Call) => {
-        console.log(call);
-    }
-
 
     const table = useReactTable({
         data: calls,
-        columns: createCallColumns(handleView, handleDelete, handleExport),
+        columns: createCallColumns(handleListen),
         getCoreRowModel: getCoreRowModel(),
         initialState: {}, // Add empty initial state to avoid hydration warning
     });
@@ -75,7 +80,7 @@ export default function CallsPage() {
                         />
                     </div>
                     <div className="flex items-center gap-2 ml-auto">
-                        <DataTableViewOptions table={table} >
+                        <DataTableViewOptions  table={table} >
                             <Button variant="outline">
                                 <SlidersHorizontal className="h-4 w-4 md:mr-2" />
                                 <span className="hidden md:block">Filter</span>
@@ -87,14 +92,31 @@ export default function CallsPage() {
 
             <Container>
                 <div className="flex flex-col gap-2 md:gap-4">
-                    <CallTable table={table} />
+                    <CallTable loading={loading} table={table} />
                     <DataTablePagination pagination={pagination} setPagination={setPagination} />
                 </div>
             </Container>
 
-            <OperationContainer>
+            {/* <OperationContainer>
                 <OperationButton iconNode={Download} tooltip="Export" />
-            </OperationContainer>
+            </OperationContainer> */}
+
+            <Dialog open={!!selectedCall} onOpenChange={() => setSelectedCall(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Call Audio</DialogTitle>
+                    </DialogHeader>
+                    {selectedCall && (
+                        <audio 
+                            controls
+                            className="w-full"
+                            src={selectedCall.recording_url}
+                        >
+                            Your browser does not support the audio element.
+                        </audio>
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

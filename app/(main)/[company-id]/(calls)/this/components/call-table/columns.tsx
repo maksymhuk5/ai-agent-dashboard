@@ -3,16 +3,14 @@
 import { Call } from "@/app/this/constants/type";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { EyeIcon, TrashIcon, DownloadIcon, ArrowUpDown } from "lucide-react";
+import { EyeIcon, TrashIcon, DownloadIcon, ArrowUpDown, Headset } from "lucide-react";
 
 export default function createCallColumns(
-    handleView: (call: Call) => void,
-    handleDelete: (id: string) => void,
-    handleExport: (call: Call) => void,
+    handleListen: (call: Call) => void
 ): ColumnDef<Call>[] {
     return [
         {
-            accessorKey: "time",
+            accessorKey: "start_timestamp",
             header: () => (
                 <div className="flex items-center">
                     Time
@@ -22,100 +20,94 @@ export default function createCallColumns(
                 </div>
             ),
             cell: ({ row }) => {
-                return new Date(row.original.time).toLocaleString()
+                return new Date(row.original.start_timestamp).toLocaleString()
             }
         },
         {
-            accessorKey: "duration",
+            accessorKey: "duration_ms",
             header: "Duration",
             cell: ({ row }) => {
-                const minutes = Math.floor(row.original.duration / 60)
-                const seconds = row.original.duration % 60
-                return `${minutes}:${seconds.toString().padStart(2, '0')}`
+                const seconds = Math.floor(row.original.duration_ms / 1000)
+                const minutes = Math.floor(seconds / 60)
+                const remainingSeconds = seconds % 60
+                return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
             }
         },
         {
-            accessorKey: "callType",
+            accessorKey: "direction",
             header: "Type",
             cell: ({ row }) => {
                 return (
                     <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                        ${row.original.callType === 'Inbound'
+                        ${row.original.direction === 'inbound'
                             ? 'bg-green-100 text-green-800'
-                            : row.original.callType === 'Outbound'
+                            : row.original.direction === 'outbound'
                                 ? 'bg-blue-100 text-blue-800'
                                 : 'bg-gray-100 text-gray-800'
                         }`}>
-                        {row.original.callType}
+                        {row.original.call_type === 'web_call' 
+                            ? row.original.call_type
+                            : row.original.direction}
                     </div>
                 )
             }
         },
         {
-            accessorKey: "cost",
+            accessorKey: "call_cost",
             header: "Cost",
             cell: ({ row }) => {
-                return `$${row.original.cost.toFixed(2)}`
+                return `$${(row.original.call_cost.combined_cost/100).toFixed(2)}`
             }
         },
         {
-            accessorKey: "agent",
-            header: "Agent",
+            accessorKey: "agent_id",
+            header: "Agent ID",
             cell: ({ row }) => {
-                return row.original.agent.name
+                return row.original.agent_id
             }
         },
         {
-            accessorKey: "lead",
-            header: "Lead",
-            cell: ({ row }) => {
-                return row.original.lead.name
-            }
-        },
-        {
-            accessorKey: "from",
+            accessorKey: "from_number",
             header: "From",
             cell: ({ row }) => {
-                return row.original.from
+                return row.original.from_number
             }
         },
         {
-            accessorKey: "to",
+            accessorKey: "to_number", 
             header: "To",
             cell: ({ row }) => {
-                return row.original.to
+                return row.original.to_number
             }
         },
         {
-            accessorKey: "callResult",
+            accessorKey: "call_analysis",
             header: "Result",
             cell: ({ row }) => {
                 return (
                     <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                        ${row.original.callResult === 'Success'
+                        ${row.original.call_analysis.call_successful
                             ? 'bg-green-100 text-green-800'
-                            : row.original.callResult === 'Failed'
-                                ? 'bg-red-100 text-red-800'
-                                : 'bg-yellow-100 text-yellow-800'
+                            : 'bg-red-100 text-red-800'
                         }`}>
-                        {row.original.callResult}
+                        {row.original.call_analysis.call_completion_rating}
                     </div>
                 )
             }
         },
         {
-            accessorKey: "callStatus",
+            accessorKey: "call_status",
             header: "Status",
             cell: ({ row }) => {
                 return (
                     <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                        ${row.original.callStatus === 'Completed'
+                        ${row.original.call_status === 'completed'
                             ? 'bg-green-100 text-green-800'
-                            : row.original.callStatus === 'Failed' || row.original.callStatus === 'Missed'
+                            : row.original.call_status === 'error'
                                 ? 'bg-red-100 text-red-800'
                                 : 'bg-yellow-100 text-yellow-800'
                         }`}>
-                        {row.original.callStatus}
+                        {row.original.call_status.charAt(0).toUpperCase() + row.original.call_status.slice(1)}
                     </div>
                 )
             }
@@ -129,23 +121,9 @@ export default function createCallColumns(
                         <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleView(row.original)}
+                            onClick={() => handleListen(row.original)}
                         >
-                            <EyeIcon className="w-4 h-4" />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleExport(row.original)}
-                        >
-                            <DownloadIcon className="w-4 h-4" />
-                        </Button>
-                        <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => handleDelete(row.original.id)}
-                        >
-                            <TrashIcon className="w-4 h-4" />
+                            <Headset className="w-4 h-4" />
                         </Button>
                     </div>
                 )

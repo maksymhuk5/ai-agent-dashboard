@@ -3,12 +3,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Delete, Phone, UserPlus } from "lucide-react";
-import { contacts } from "@/app/this/constants/garbage";
-
-
-export default function DialerDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+import { leads as contacts } from "@/app/this/constants/garbage";
+import { Agent } from "@/app/this/constants/type";
+import { getRetellClient } from "@/lib/retell";
+import { useToast } from "@/hooks/use-toast";
+export default function DialerDialog({ openDialer, onOpenChange }: { openDialer: { open: boolean; agent: Agent | null }; onOpenChange: (open: boolean) => void }) {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [filteredContacts, setFilteredContacts] = useState(contacts);
+    const { toast } = useToast();
 
 
     useEffect(() => {
@@ -20,6 +22,25 @@ export default function DialerDialog({ open, onOpenChange }: { open: boolean; on
         });
         setFilteredContacts(filtered);
     }, [phoneNumber]);
+
+    const handleMakeCall = async () => {
+        try {
+            if (!openDialer.agent) return;
+            const client = await getRetellClient();
+            const response = await client.call.createPhoneCall({
+            from_number: openDialer.agent.phone_number.outbound_number,
+            to_number: phoneNumber,
+            });
+            console.log(response);
+        } catch (error) {
+            console.error(error);
+            toast({
+                title: "Error",
+                description: "Error making call, check your phone number and try again",
+                variant: "destructive"
+            });
+        }
+    }
 
     const handleNumberClick = (num: string) => {
         setPhoneNumber(prev => prev + num);
@@ -34,7 +55,7 @@ export default function DialerDialog({ open, onOpenChange }: { open: boolean; on
     };
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog open={openDialer.open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
@@ -98,7 +119,7 @@ export default function DialerDialog({ open, onOpenChange }: { open: boolean; on
                         </Button>
                     </div>
 
-                    <Button variant="default" className="h-12 text-lg">
+                    <Button variant="default" className="h-12 text-lg" onClick={handleMakeCall}>
                         <Phone className="h-4 w-4 mr-2" />
                         Make a Call
                     </Button>

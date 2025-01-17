@@ -17,16 +17,38 @@ export type SortingState = {
 }
 
 export type Agent = {
-    id: number;
-    name: string;
-    avatar: string;
+    agent_id: string;
+    last_modification_timestamp: number;
+    phone_number: {
+        inbound_number: string;
+        outbound_number: string;
+    };
+    voice_id: string;
+    voice_model: string;
+    voice_temperature: number;
+    voice_speed: number;
+    volume: number;
+    enable_backchannel: boolean;
+    backchannel_words: string[];
+    interruption_sensitivity: number;
+    ambient_sound: string;
+    ambient_sound_volume: number;
+    agent_name: string;
+    response_engine: {
+        type: string;
+        llm_id: string;
+    };
+    llm_websocket_url: string;
+    responsiveness: number;
     language: string;
-    phone: string;
-    type: string; // Sales, Secretary, Customer Service, Institutional, Real Estate, Feedback Collection, Custom
-    totalCallTime: number;
-    completedLeads: number;
-    incomingCalls: number;
-    outgoingCalls: number;
+    opt_out_sensitive_data_storage: boolean;
+    normalize_for_speech: boolean;
+    end_call_after_silence_ms: number;
+    enable_voicemail_detection: boolean;
+    voicemail_message: string;
+    max_call_duration_ms: number;
+    voicemail_detection_timeout_ms: number;
+    begin_message_delay_ms: number;
 }
 
 export type AgentType =
@@ -79,19 +101,42 @@ export type TeamMember = {
 }
 
 export type Call = {
-    id: string;
-    time: string;
-    duration: number; // in seconds
-    callType: string; // Inbound, Outbound, Internal
-    cost: number; // in USD
-    agent: Agent; // agent id
-    lead: Lead; // lead id
-    from: string; // phone number
-    to: string; // phone number
-    callResult: string; // Success, Failed, No Answer, Busy, Voicemail, Other
-    callStatus: string; // Completed, Missed, Abandoned, Voicemail, Busy, No Answer, Answered, Rejected, Failed, Cancelled, Other
-    callNotes: string; // notes of the call
-    transcription: string; // transcription of the call
+    call_id: string;
+    agent_id: string;
+    call_status: string;
+    start_timestamp: number;
+    end_timestamp: number;
+    duration_ms: number;
+    public_log_url: string;
+    recording_url: string;
+    disconnection_reason: string;
+    latency: Record<string, any>;
+    cost_metadata: {
+        telecommunication: string;
+        llm_model: string;
+        voice_provider: string;
+    };
+    call_cost: {
+        total_duration_unit_price: number;
+        product_costs: any[];
+        total_one_time_price: number;
+        combined_cost: number;
+        total_duration_seconds: number;
+    };
+    call_analysis: {
+        custom_analysis_data: Record<string, any>;
+        agent_task_completion_rating: string;
+        call_successful: boolean;
+        in_voicemail: boolean;
+        call_summary: string;
+        user_sentiment: string;
+        call_completion_rating: string;
+    };
+    opt_out_sensitive_data_storage: boolean;
+    call_type: string;
+    from_number: string;
+    to_number: string;
+    direction: 'inbound' | 'outbound';
 }
 
 
