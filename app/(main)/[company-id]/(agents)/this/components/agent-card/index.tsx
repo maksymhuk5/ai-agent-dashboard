@@ -35,11 +35,11 @@ export default function AgentCard({
                         <div className="flex flex-col gap-1">
                             {phone_number.inbound_number && <div className="flex items-center gap-2 text-sm text-sky-500">
                                 <PhoneIncoming className="h-4 w-4" />
-                                <span className="underline cursor-pointer" onClick={handleOpenDialer}>{phone_number.inbound_number}</span>
+                                <span className="underline cursor-pointer" >{phone_number.inbound_number}</span>
                             </div>}
                             {phone_number.outbound_number && <div className="flex items-center gap-2 text-sm text-sky-500">
                                 <PhoneOutgoing className="h-4 w-4" />
-                                <span className="underline cursor-pointer" onClick={handleOpenDialer}>{phone_number.outbound_number}</span>
+                                <span className="underline cursor-pointer" >{phone_number.outbound_number}</span>
                             </div>}
                             {
                                 !phone_number.inbound_number && !phone_number.outbound_number ?

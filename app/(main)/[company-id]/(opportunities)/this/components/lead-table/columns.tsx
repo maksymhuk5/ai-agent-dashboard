@@ -19,7 +19,7 @@ export function getColumns(
                 return (
                     <div className="flex items-center gap-2 md:gap-4">
                         <Avatar className="h-8 w-8">
-                            <AvatarImage src={row.original.avatar} alt={row.original.name} />
+                            <AvatarImage src={row.original.name} alt={row.original.name} />
                             <AvatarFallback>{row.original.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col">

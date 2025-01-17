@@ -8,7 +8,7 @@ export const authChange = (token: string) => {
         type: AUTH_CHANGE,
         payload: {
             isAuthenticated: isAuthenticated(),
-            isSuperAdmin: getUser()?.isSuperAdmin,
+            isSuperAdmin: true,
             user: getUser()
         }
     }

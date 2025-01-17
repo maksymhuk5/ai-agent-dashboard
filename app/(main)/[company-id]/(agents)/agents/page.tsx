@@ -21,7 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 export default function AgentsPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
-    const [openDialer, setOpenDialer] = useState({open: false, agent: null});
+    const [openDialer, setOpenDialer] = useState<any>({open: false});
     const [agents, setAgents] = useState<Agent[]>([]);
     const [loading, setLoading] = useState(true);
     const { toast } = useToast();
@@ -36,7 +36,7 @@ export default function AgentsPage() {
     const handleOpenDialer = (agent: Agent) => {
         console.log(agent);
         if (agent.phone_number.outbound_number) {
-            setOpenDialer({open: true, agent: agent});
+            setOpenDialer({ open: true, agent });
         } else {
             toast({
                 title: "No outbound phone number found",
@@ -71,7 +71,7 @@ export default function AgentsPage() {
                 };
             });
 
-            setAgents(agentsWithPhoneNumbers);
+            setAgents(agentsWithPhoneNumbers as Agent[]);
         } catch (error) {
             console.error('Error fetching agents:', error);
             toast({

@@ -46,7 +46,7 @@ export default function CallsPage() {
             const res_calls = await client.call.list({});
             console.log(res_calls);
             // const filteredCalls = res_calls.filter(call => call.call_type === 'web_call');
-            setCalls(res_calls);
+            setCalls(res_calls as Call[]);
             
         } catch (error) {
             console.error(error);

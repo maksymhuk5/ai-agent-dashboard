@@ -34,11 +34,6 @@ export type Agent = {
     ambient_sound: string;
     ambient_sound_volume: number;
     agent_name: string;
-    response_engine: {
-        type: string;
-        llm_id: string;
-    };
-    llm_websocket_url: string;
     responsiveness: number;
     language: string;
     opt_out_sensitive_data_storage: boolean;
