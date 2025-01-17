@@ -144,3 +144,57 @@ export type Knowledge = {
     size: number; // in bytes
     createdAt: string;
 }
+
+export type Opportunity = {
+  id: string;
+  fx_record_id: string;
+  call_id: string;
+  contact_id: string;
+  org_id: string;
+  datetime: string;
+  call_type: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: string;
+  total_costs: number;
+  transport_model: string;
+  voice_vapi: string;
+  retell: string;
+  analysis: string;
+  ended_reason: string;
+  transfer_destination: string;
+  recording_url: string;
+  transcript: string;
+  agent_name: string;
+  phone_number_id: string;
+  address: {
+    street: string;
+    city: string;
+    country: string;
+    coordinates: {
+      lat: number;
+      lng: number;
+    };
+  };
+  cp_type: string;
+  status: OpportunityStatus;
+  offer_from: string;
+  call_duration: number;
+  scoring: number;
+  reasons: string[];
+  follow_up: string;
+  scheduled_appointment_with: string;
+  successful_appointment_scheduling: boolean;
+  created_at: string;
+}
+
+export type OpportunityStatus = 
+  | 'New'
+  | 'Contacted'
+  | 'Qualified'
+  | 'Proposal'
+  | 'Negotiation' 
+  | 'Closed Won'
+  | 'Closed Lost'
+  | 'Follow Up'

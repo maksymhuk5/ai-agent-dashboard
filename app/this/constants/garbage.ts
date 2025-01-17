@@ -1,3 +1,4 @@
+import { Opportunity, OpportunityStatus } from "./type";
 
 // Garbage agent data for dialer testing purposes
 export const agents = [
@@ -174,5 +175,79 @@ export const calls = Array.from({ length: 30 }, (_, i) => {
         transcription: status === "Completed" ? 
             transcriptions[Math.floor(Math.random() * (transcriptions.length - 1))] : 
             transcriptions[transcriptions.length - 1]
+    };
+});
+
+export const opportunities: Opportunity[] = Array.from({ length: 30 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - Math.floor(Math.random() * 30));
+    
+    const duration = Math.floor(Math.random() * 600) + 60; // 1-10 minutes
+    const cost = (Math.random() * 5 + 1).toFixed(2);
+    const score = Math.floor(Math.random() * 10) + 1;
+    
+    const statuses: OpportunityStatus[] = [
+        'New', 'Contacted', 'Qualified', 'Proposal', 
+        'Negotiation', 'Closed Won', 'Closed Lost', 'Follow Up'
+    ];
+    
+    const firstNames = ['John', 'Jane', 'Michael', 'Sarah', 'David', 'Emma'];
+    const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia'];
+    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+    
+    const reasons = [
+        'Price too high',
+        'Not ready to buy',
+        'Needs more information',
+        'Competition offering better terms',
+        'Budget constraints',
+        'Technical requirements not met'
+    ];
+
+    return {
+        id: `opp-${i + 1}`,
+        fx_record_id: `FX-${Math.random().toString(36).substr(2, 9)}`,
+        call_id: `call-${Math.random().toString(36).substr(2, 9)}`,
+        contact_id: `contact-${Math.random().toString(36).substr(2, 9)}`,
+        org_id: `org-${Math.random().toString(36).substr(2, 9)}`,
+        datetime: date.toISOString(),
+        call_type: Math.random() > 0.5 ? 'Inbound' : 'Outbound',
+        first_name: firstName,
+        last_name: lastName,
+        email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@example.com`,
+        phone_number: `+1${Math.floor(Math.random() * 9000000000) + 1000000000}`,
+        total_costs: parseFloat(cost),
+        transport_model: 'GPT-4',
+        voice_vapi: 'en-US-Standard-A',
+        retell: 'v2.0',
+        analysis: 'Customer showed strong interest in premium features',
+        ended_reason: Math.random() > 0.8 ? 'Dropped' : 'Completed',
+        transfer_destination: Math.random() > 0.7 ? 'Sales Department' : '',
+        recording_url: `https://example.com/recordings/${i + 1}`,
+        transcript: 'Sample transcript content...',
+        agent_name: 'Agent Smith',
+        phone_number_id: `phone-${Math.random().toString(36).substr(2, 9)}`,
+        address: {
+            street: `${Math.floor(Math.random() * 9999) + 1} Main St`,
+            city: 'New York',
+            country: 'USA',
+            coordinates: {
+                lat: 40.7128 + (Math.random() - 0.5),
+                lng: -74.0060 + (Math.random() - 0.5)
+            }
+        },
+        cp_type: Math.random() > 0.5 ? 'Business' : 'Individual',
+        status: statuses[Math.floor(Math.random() * statuses.length)],
+        offer_from: `$${Math.floor(Math.random() * 10000)}`,
+        call_duration: duration,
+        scoring: score,
+        reasons: Array.from({ length: Math.floor(Math.random() * 3) + 1 }, () => 
+            reasons[Math.floor(Math.random() * reasons.length)]
+        ),
+        follow_up: Math.random() > 0.5 ? new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString() : '',
+        scheduled_appointment_with: Math.random() > 0.7 ? 'Sales Representative' : '',
+        successful_appointment_scheduling: Math.random() > 0.6,
+        created_at: date.toISOString()
     };
 });
