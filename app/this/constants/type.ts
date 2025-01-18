@@ -131,6 +131,8 @@ export type Call = {
     call_type: string;
     from_number: string;
     to_number: string;
+    transcript: string;
+    transcript_object: any[];
     direction: 'inbound' | 'outbound';
 }
 
@@ -146,55 +148,31 @@ export type Knowledge = {
 }
 
 export type Opportunity = {
-  id: string;
-  fx_record_id: string;
-  call_id: string;
-  contact_id: string;
-  org_id: string;
-  datetime: string;
-  call_type: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone_number: string;
-  total_costs: number;
-  transport_model: string;
-  voice_vapi: string;
-  retell: string;
-  analysis: string;
-  ended_reason: string;
-  transfer_destination: string;
-  recording_url: string;
-  transcript: string;
-  agent_name: string;
-  phone_number_id: string;
-  address: {
-    street: string;
-    city: string;
-    country: string;
-    coordinates: {
-      lat: number;
-      lng: number;
+    id: string;
+    first_name: string;  // vorname
+    last_name: string;   // name
+    address: {
+        street: string;  // strasse
+        city: string;    // ort
+        country: string; // land
     };
-  };
-  cp_type: string;
-  status: OpportunityStatus;
-  offer_from: string;
-  call_duration: number;
-  scoring: number;
-  reasons: string[];
-  follow_up: string;
-  scheduled_appointment_with: string;
-  successful_appointment_scheduling: boolean;
-  created_at: string;
+    phone_number: string; // telefon
+    coordinates: {
+        lat: number;
+        lng: number;
+    };
+    email: string;
+    cp_type: string;     // cp_typ (Flachdach, Terrassendach, Spitzdach)
+    offer_from: string;  // angebot_von (date)
+    offer_update: string; // angebot_update (datetime)
+    status: OpportunityStatus;
+    created_at: string;
+    updated_at: string;
 }
 
 export type OpportunityStatus = 
-  | 'New'
-  | 'Contacted'
-  | 'Qualified'
-  | 'Proposal'
-  | 'Negotiation' 
-  | 'Closed Won'
-  | 'Closed Lost'
-  | 'Follow Up'
+  | 'New'          // Empty
+  | 'Contacted'    // Empty with date
+  | 'In Progress'  // C
+  | 'Cancelled'    // X
+  | 'Completed'    // Done

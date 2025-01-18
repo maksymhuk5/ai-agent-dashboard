@@ -1,15 +1,6 @@
 'use client';
 
-import { calls } from '@/app/this/constants/garbage';
 import { Card } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { PieChart, Pie, Cell } from 'recharts';
 import { BarChart, Bar } from 'recharts';
@@ -28,6 +19,14 @@ export default function MainPage() {
     { label: 'Success Rate', value: '65%', comparison: 8.3 },
     { label: 'Appointments Scheduled', value: 20, comparison: 25.0 },
     { label: 'Operating Cost', value: '2,500', prefix: '$', comparison: -5.2 },
+    { label: 'Avg Call Duration', value: '5:30min', comparison: -10.2 },
+    { label: 'Conversion Rate', value: '35%', comparison: 15.7 },
+    { label: 'Customer Satisfaction', value: '4.2/5', comparison: 5.0 },
+    { label: 'Follow-up Rate', value: '78%', comparison: 12.8 },
+    { label: 'Revenue Generated', value: '12,000', prefix: '$', comparison: 18.5 },
+    { label: 'Calls Per Hour', value: '4.2', comparison: 6.3 },
+    { label: 'Script Adherence', value: '92%', comparison: 3.2 },
+    { label: 'Quality Score', value: '88%', comparison: 7.5 }
   ];
 
   // Mock data for line chart (calls over time)
@@ -49,14 +48,7 @@ export default function MainPage() {
     { name: 'Follow-ups', value: 62, color: '#FFC107' } // Amber
   ];
 
-  // Data for bar chart
-  const performanceMetrics = [
-    { name: 'Leads', value: 28 },
-    { name: 'Prospects', value: 45 },
-    { name: 'Fails', value: 15 },
-    { name: 'Follow-ups', value: 62 },
-  ];
-
+ 
   // Data for top performing agents
   const topAgentsData = [
     { name: 'John Smith', calls: 85, success: 65, appointments: 12 },

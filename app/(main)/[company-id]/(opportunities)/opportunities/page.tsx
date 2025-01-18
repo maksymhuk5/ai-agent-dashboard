@@ -56,36 +56,11 @@ export default function OpportunitiesPage() {
         setSelectedOpportunity(opportunity);
     };
 
-    const handleCall = (opportunity: Opportunity) => {
-        // TODO: Implement call functionality
-        console.log("Call:", opportunity);
-    };
-
-    const handleExport = (opportunity: Opportunity) => {
-        // TODO: Implement export functionality
-        console.log("Export:", opportunity);
-    };
-
-    const handleDelete = async (id: string) => {
-        try {
-            // TODO: Implement delete API call
-            toast({
-                title: "Success",
-                description: "Opportunity deleted successfully"
-            });
-            fetchOpportunities();
-        } catch (error) {
-            toast({
-                title: "Error",
-                description: "Failed to delete opportunity",
-                variant: "destructive"
-            });
-        }
-    };
+    
 
     const table = useReactTable({
         data: opportunities,
-        columns: getColumns(handleView, handleCall, handleExport, handleDelete),
+        columns: getColumns(handleView),
         getCoreRowModel: getCoreRowModel(),
         pageCount: Math.ceil(pagination.total / pagination.pageSize),
         state: {
@@ -139,35 +114,18 @@ export default function OpportunitiesPage() {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <p><span className="font-semibold">ID:</span> {selectedOpportunity.id}</p>
-                                <p><span className="font-semibold">Record ID:</span> {selectedOpportunity.fx_record_id}</p>
-                                <p><span className="font-semibold">Call ID:</span> {selectedOpportunity.call_id}</p>
-                                <p><span className="font-semibold">Contact ID:</span> {selectedOpportunity.contact_id}</p>
-                                <p><span className="font-semibold">Organization ID:</span> {selectedOpportunity.org_id}</p>
-                                <p><span className="font-semibold">Date & Time:</span> {new Date(selectedOpportunity.datetime).toLocaleString()}</p>
-                                <p><span className="font-semibold">Call Type:</span> {selectedOpportunity.call_type}</p>
                                 <p><span className="font-semibold">Name:</span> {selectedOpportunity.first_name} {selectedOpportunity.last_name}</p>
                                 <p><span className="font-semibold">Email:</span> {selectedOpportunity.email}</p>
                                 <p><span className="font-semibold">Phone:</span> {selectedOpportunity.phone_number}</p>
-                                <p><span className="font-semibold">Total Costs:</span> ${selectedOpportunity.total_costs.toFixed(2)}</p>
-                                <p><span className="font-semibold">Transport Model:</span> {selectedOpportunity.transport_model}</p>
-                                <p><span className="font-semibold">Voice VAPI:</span> {selectedOpportunity.voice_vapi}</p>
-                                <p><span className="font-semibold">Retell:</span> {selectedOpportunity.retell}</p>
-                            </div>
-                            <div className="space-y-2">
-                                <p><span className="font-semibold">Analysis:</span> {selectedOpportunity.analysis}</p>
-                                <p><span className="font-semibold">Ended Reason:</span> {selectedOpportunity.ended_reason}</p>
-                                <p><span className="font-semibold">Transfer Destination:</span> {selectedOpportunity.transfer_destination || 'N/A'}</p>
-                                <p><span className="font-semibold">Agent Name:</span> {selectedOpportunity.agent_name}</p>
                                 <p><span className="font-semibold">Address:</span> {selectedOpportunity.address.street}, {selectedOpportunity.address.city}, {selectedOpportunity.address.country}</p>
                                 <p><span className="font-semibold">Contact Type:</span> {selectedOpportunity.cp_type}</p>
                                 <p><span className="font-semibold">Status:</span> {selectedOpportunity.status}</p>
-                                <p><span className="font-semibold">Offer Amount:</span> {selectedOpportunity.offer_from}</p>
-                                <p><span className="font-semibold">Call Duration:</span> {Math.floor(selectedOpportunity.call_duration / 60)}:{(selectedOpportunity.call_duration % 60).toString().padStart(2, '0')}</p>
-                                <p><span className="font-semibold">Score:</span> {selectedOpportunity.scoring}/10</p>
-                                <p><span className="font-semibold">Reasons:</span> {selectedOpportunity.reasons.join(', ')}</p>
-                                <p><span className="font-semibold">Follow Up:</span> {selectedOpportunity.follow_up ? new Date(selectedOpportunity.follow_up).toLocaleDateString() : 'N/A'}</p>
-                                <p><span className="font-semibold">Appointment With:</span> {selectedOpportunity.scheduled_appointment_with || 'N/A'}</p>
-                                <p><span className="font-semibold">Appointment Status:</span> {selectedOpportunity.successful_appointment_scheduling ? 'Scheduled' : 'Not Scheduled'}</p>
+                                <p><span className="font-semibold">Offer Date:</span> {selectedOpportunity.offer_from}</p>
+                                <p><span className="font-semibold">Last Updated:</span> {selectedOpportunity.updated_at}</p>
+                            </div>
+                            <div className="space-y-2">
+                                <p><span className="font-semibold">Coordinates:</span> {selectedOpportunity.coordinates.lat}, {selectedOpportunity.coordinates.lng}</p>
+                                <p><span className="font-semibold">Created At:</span> {selectedOpportunity.created_at}</p>
                             </div>
                         </div>
                     )}

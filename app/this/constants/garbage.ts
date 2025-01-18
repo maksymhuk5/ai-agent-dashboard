@@ -179,75 +179,42 @@ export const calls = Array.from({ length: 30 }, (_, i) => {
 });
 
 export const opportunities: Opportunity[] = Array.from({ length: 30 }, (_, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() - Math.floor(Math.random() * 30));
-    
-    const duration = Math.floor(Math.random() * 600) + 60; // 1-10 minutes
-    const cost = (Math.random() * 5 + 1).toFixed(2);
-    const score = Math.floor(Math.random() * 10) + 1;
-    
-    const statuses: OpportunityStatus[] = [
-        'New', 'Contacted', 'Qualified', 'Proposal', 
-        'Negotiation', 'Closed Won', 'Closed Lost', 'Follow Up'
-    ];
-    
-    const firstNames = ['John', 'Jane', 'Michael', 'Sarah', 'David', 'Emma'];
-    const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia'];
-    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-    
-    const reasons = [
-        'Price too high',
-        'Not ready to buy',
-        'Needs more information',
-        'Competition offering better terms',
-        'Budget constraints',
-        'Technical requirements not met'
-    ];
+    const firstNames = ["Harald", "Thomas", "Michael", "Stefan", "Andreas", "Peter", "Klaus", "Wolfgang", "Markus", "Christian"];
+    const lastNames = ["Neubauer", "Schmidt", "Müller", "Weber", "Wagner", "Fischer", "Meyer", "Schulz", "Becker", "Hoffmann"];
+    const streets = ["Weinbergstr.", "Hauptstr.", "Kirchstr.", "Schulstr.", "Gartenstr.", "Bahnhofstr.", "Bergstr.", "Waldstr.", "Ringstr.", "Parkstr."];
+    const cities = ["Wilhermsdorf", "Nürnberg", "München", "Stuttgart", "Frankfurt", "Hamburg", "Berlin", "Köln", "Dresden", "Leipzig"];
+    const types = ["Flachdach", "Terrassendach", "Spitzdach"];
+    const statuses: OpportunityStatus[] = ["New", "Contacted", "In Progress", "Cancelled", "Completed"];
+
+    const randomDate = () => {
+        const start = new Date(2024, 0, 1);
+        const end = new Date(2025, 11, 31);
+        return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+    };
+
+    const offerDate = randomDate();
+    const updateDate = new Date(offerDate.getTime() + Math.random() * 86400000); // Add up to 1 day
 
     return {
-        id: `opp-${i + 1}`,
-        fx_record_id: `FX-${Math.random().toString(36).substr(2, 9)}`,
-        call_id: `call-${Math.random().toString(36).substr(2, 9)}`,
-        contact_id: `contact-${Math.random().toString(36).substr(2, 9)}`,
-        org_id: `org-${Math.random().toString(36).substr(2, 9)}`,
-        datetime: date.toISOString(),
-        call_type: Math.random() > 0.5 ? 'Inbound' : 'Outbound',
-        first_name: firstName,
-        last_name: lastName,
-        email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@example.com`,
-        phone_number: `+1${Math.floor(Math.random() * 9000000000) + 1000000000}`,
-        total_costs: parseFloat(cost),
-        transport_model: 'GPT-4',
-        voice_vapi: 'en-US-Standard-A',
-        retell: 'v2.0',
-        analysis: 'Customer showed strong interest in premium features',
-        ended_reason: Math.random() > 0.8 ? 'Dropped' : 'Completed',
-        transfer_destination: Math.random() > 0.7 ? 'Sales Department' : '',
-        recording_url: `https://example.com/recordings/${i + 1}`,
-        transcript: 'Sample transcript content...',
-        agent_name: 'Agent Smith',
-        phone_number_id: `phone-${Math.random().toString(36).substr(2, 9)}`,
+        id: (781228 + i).toString(),
+        first_name: firstNames[Math.floor(Math.random() * firstNames.length)],
+        last_name: lastNames[Math.floor(Math.random() * lastNames.length)],
         address: {
-            street: `${Math.floor(Math.random() * 9999) + 1} Main St`,
-            city: 'New York',
-            country: 'USA',
-            coordinates: {
-                lat: 40.7128 + (Math.random() - 0.5),
-                lng: -74.0060 + (Math.random() - 0.5)
-            }
+            street: `${streets[Math.floor(Math.random() * streets.length)]}${Math.floor(Math.random() * 100) + 1}`,
+            city: `${Math.floor(Math.random() * 99999).toString().padStart(5, '0')} ${cities[Math.floor(Math.random() * cities.length)]}`,
+            country: "Deutschland"
         },
-        cp_type: Math.random() > 0.5 ? 'Business' : 'Individual',
+        phone_number: `0049-${Math.floor(Math.random() * 9000000000 + 1000000000)}`,
+        coordinates: {
+            lat: 47 + Math.random() * 8,
+            lng: 5 + Math.random() * 10
+        },
+        email: `user${i + 1}@${['gmail.com', 't-online.de', 'yahoo.de', 'web.de'][Math.floor(Math.random() * 4)]}`,
+        cp_type: types[Math.floor(Math.random() * types.length)],
+        offer_from: offerDate.toISOString().split('T')[0],
+        offer_update: updateDate.toISOString().replace('T', ' ').split('.')[0],
         status: statuses[Math.floor(Math.random() * statuses.length)],
-        offer_from: `$${Math.floor(Math.random() * 10000)}`,
-        call_duration: duration,
-        scoring: score,
-        reasons: Array.from({ length: Math.floor(Math.random() * 3) + 1 }, () => 
-            reasons[Math.floor(Math.random() * reasons.length)]
-        ),
-        follow_up: Math.random() > 0.5 ? new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString() : '',
-        scheduled_appointment_with: Math.random() > 0.7 ? 'Sales Representative' : '',
-        successful_appointment_scheduling: Math.random() > 0.6,
-        created_at: date.toISOString()
+        created_at: offerDate.toISOString().split('T')[0],
+        updated_at: updateDate.toISOString().replace('T', ' ').split('.')[0]
     };
 });

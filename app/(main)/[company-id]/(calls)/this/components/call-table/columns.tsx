@@ -3,10 +3,11 @@
 import { Call } from "@/app/this/constants/type";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { EyeIcon, TrashIcon, DownloadIcon, ArrowUpDown, Headset } from "lucide-react";
+import { EyeIcon, TrashIcon, DownloadIcon, ArrowUpDown, Headset, MessageSquareText } from "lucide-react";
 
 export default function createCallColumns(
-    handleListen: (call: Call) => void
+    handleListen: (call: Call) => void,
+    handleSummarize: (call: Call) => void
 ): ColumnDef<Call>[] {
     return [
         {
@@ -121,9 +122,16 @@ export default function createCallColumns(
                         <Button
                             variant="outline"
                             size="sm"
+                            onClick={() => handleSummarize(row.original)}
+                        >
+                            <EyeIcon className="w-4 h-4" />
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
                             onClick={() => handleListen(row.original)}
                         >
-                            <Headset className="w-4 h-4" />
+                            <MessageSquareText className="w-4 h-4" />
                         </Button>
                     </div>
                 )

@@ -16,18 +16,15 @@ import { Call } from "@/app/this/constants/type";
 import { calls as sample_calls } from "@/app/this/constants/garbage";
 import { Download } from "lucide-react";
 import { getRetellClient } from "@/lib/retell";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
+import TranscriptDialog from "../this/components/transcript-dialog";
+import { SummaryDialog } from "../this/components/summary-dialog";
 
 export default function CallsPage() {
     const [calls, setCalls] = useState<Call[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedCall, setSelectedCall] = useState<Call | null>(null);
+    const [transcriptCall, setTranscriptCall] = useState<Call | null>(null);
+    const [summaryCall, setSummaryCall] = useState<Call | null>(null);
     const [pagination, setPagination] = useState({
         pageIndex: 0,
         pageSize: 10,
@@ -44,8 +41,7 @@ export default function CallsPage() {
             setLoading(true);
             const client = await getRetellClient();
             const res_calls = await client.call.list({});
-            console.log(res_calls);
-            // const filteredCalls = res_calls.filter(call => call.call_type === 'web_call');
+            
             setCalls(res_calls as Call[]);
             
         } catch (error) {
@@ -56,12 +52,16 @@ export default function CallsPage() {
     }
 
     const handleListen = (call: Call) => {
-        setSelectedCall(call);
+        setTranscriptCall(call);
+    }
+
+    const handleSummarize = (call: Call) => {
+        setSummaryCall(call);
     }
 
     const table = useReactTable({
         data: calls,
-        columns: createCallColumns(handleListen),
+        columns: createCallColumns(handleListen, handleSummarize),
         getCoreRowModel: getCoreRowModel(),
         initialState: {}, // Add empty initial state to avoid hydration warning
     });
@@ -101,22 +101,8 @@ export default function CallsPage() {
                 <OperationButton iconNode={Download} tooltip="Export" />
             </OperationContainer> */}
 
-            <Dialog open={!!selectedCall} onOpenChange={() => setSelectedCall(null)}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Call Audio</DialogTitle>
-                    </DialogHeader>
-                    {selectedCall && (
-                        <audio 
-                            controls
-                            className="w-full"
-                            src={selectedCall.recording_url}
-                        >
-                            Your browser does not support the audio element.
-                        </audio>
-                    )}
-                </DialogContent>
-            </Dialog>
+            <TranscriptDialog transcriptCall={transcriptCall} setTranscriptCall={setTranscriptCall} />
+            <SummaryDialog summaryCall={summaryCall} setSummaryCall={setSummaryCall} />
         </div>
     );
 }
